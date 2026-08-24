@@ -11,14 +11,11 @@ export class PoseDetector {
   private lastVideoTime = -1;
 
   async initialize(): Promise<void> {
-    const vision = await FilesetResolver.forVisionTasks(
-      "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm",
-    );
+    const vision = await FilesetResolver.forVisionTasks("/mediapipe/wasm");
     this.landmarker = await PoseLandmarker.createFromOptions(vision, {
       baseOptions: {
-        // 公式の無料モデルです。将来はpublic/modelsへローカル配置できます。
-        modelAssetPath:
-          "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",
+        // 公式の無料モデルをpublicへ同梱し、公開先からローカル取得します。
+        modelAssetPath: "/mediapipe/models/pose_landmarker_lite.task",
         delegate: "GPU",
       },
       runningMode: "VIDEO",
