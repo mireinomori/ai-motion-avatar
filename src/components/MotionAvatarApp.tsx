@@ -26,6 +26,7 @@ export function MotionAvatarApp() {
   const [status, setStatus] = useState<CameraStatus>("stopped");
   const [facingMode, setFacingMode] = useState<CameraFacingMode>("user");
   const [errorMessage, setErrorMessage] = useState("");
+  const [hasStream, setHasStream] = useState(false);
   const [showAvatar, setShowAvatar] = useState(true);
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [vrmUrl, setVrmUrl] = useState<string | null>(null);
@@ -44,6 +45,7 @@ export function MotionAvatarApp() {
     poseDetectorRef.current = null;
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
+    setHasStream(false);
     if (videoRef.current) videoRef.current.srcObject = null;
     setStatus("stopped");
   }, []);
@@ -96,6 +98,7 @@ export function MotionAvatarApp() {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
       }
+      setHasStream(true);
       setStatus("active");
       void startPoseDetection();
     } catch (error) {
@@ -144,7 +147,7 @@ export function MotionAvatarApp() {
           <div className="panel-heading"><span>CAMERA VIEW</span><small>端末内処理</small></div>
           <div className="camera-frame">
             <video ref={videoRef} className="camera-video" playsInline muted aria-label="カメラ映像" />
-            {status !== "active" && <div className="camera-placeholder"><div className="camera-icon">◉</div><p>カメラを開始すると<br />ここに映像が表示されます</p></div>}
+            {!hasStream && <div className="camera-placeholder"><div className="camera-icon">◉</div><p>カメラを開始すると<br />ここに映像が表示されます</p></div>}
             <PoseOverlay resultRef={poseResultRef} visible={showSkeleton} />
           </div>
         </div>
